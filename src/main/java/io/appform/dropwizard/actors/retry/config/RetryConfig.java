@@ -39,7 +39,8 @@ import java.util.Set;
         @JsonSubTypes.Type(name = "TIME_LIMITED_EXPONENTIAL_BACKOFF", value =
                 TimeLimitedExponentialWaitRetryConfig.class),
         @JsonSubTypes.Type(name = "TIME_LIMITED_FIXED_WAIT", value = TimeLimitedFixedWaitRetryConfig.class),
-        @JsonSubTypes.Type(name = "TIME_LIMITED_INCREMENTAL_WAIT", value = TimeLimitedIncrementalWaitRetryConfig.class)
+        @JsonSubTypes.Type(name = "TIME_LIMITED_INCREMENTAL_WAIT", value = TimeLimitedIncrementalWaitRetryConfig.class),
+        @JsonSubTypes.Type(name = "COUNT_LIMITED_FIXED_WAIT_V2", value = CountLimitedFixedWaitRetryConfigV2.class)
 })
 @Data
 @EqualsAndHashCode

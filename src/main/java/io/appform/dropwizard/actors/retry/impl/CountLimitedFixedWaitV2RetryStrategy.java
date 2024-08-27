@@ -10,6 +10,7 @@ import io.appform.dropwizard.actors.base.utils.NamingUtils;
 import io.appform.dropwizard.actors.retry.RetryStrategy;
 import io.appform.dropwizard.actors.retry.RetryType;
 import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfig;
+import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfigV2;
 import io.appform.dropwizard.actors.utils.CommonUtils;
 import io.dropwizard.util.Duration;
 import java.io.IOException;
@@ -26,10 +27,10 @@ public class CountLimitedFixedWaitV2RetryStrategy extends RetryStrategy {
     String sidelineQueue;
     String sidelineExchange;
     ObjectMapper mapper;
-    CountLimitedFixedWaitRetryConfig config;
+    CountLimitedFixedWaitRetryConfigV2 config;
 
     @SuppressWarnings("unused")
-    public CountLimitedFixedWaitV2RetryStrategy(CountLimitedFixedWaitRetryConfig config, String queue,
+    public CountLimitedFixedWaitV2RetryStrategy(CountLimitedFixedWaitRetryConfigV2 config, String queue,
             String exchange, ObjectMapper mapper) {
         super(RetryType.COUNT_LIMITED_FIXED_WAIT_V2);
         this.retryQueue = NamingUtils.getRetry(queue);

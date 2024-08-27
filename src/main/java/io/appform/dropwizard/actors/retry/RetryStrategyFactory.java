@@ -22,6 +22,7 @@ import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.Channel;
 import io.appform.dropwizard.actors.retry.config.CountLimitedExponentialWaitRetryConfig;
 import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfig;
+import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfigV2;
 import io.appform.dropwizard.actors.retry.config.CountLimitedIncrementalWaitRetryConfig;
 import io.appform.dropwizard.actors.retry.config.NoRetryConfig;
 import io.appform.dropwizard.actors.retry.config.RetryConfig;
@@ -60,7 +61,7 @@ public class RetryStrategyFactory {
             case COUNT_LIMITED_FIXED_WAIT:
                 return new CountLimitedFixedWaitRetryStrategy(CountLimitedFixedWaitRetryConfig.class.cast(config));
             case COUNT_LIMITED_FIXED_WAIT_V2:
-                return new CountLimitedFixedWaitV2RetryStrategy((CountLimitedFixedWaitRetryConfig) config, queue, exchange, objectMapper);
+                return new CountLimitedFixedWaitV2RetryStrategy((CountLimitedFixedWaitRetryConfigV2) config, queue, exchange, objectMapper);
         }
         return null;
     }

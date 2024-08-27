@@ -25,6 +25,7 @@ import com.rabbitmq.client.AMQP;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -62,7 +63,7 @@ public class CommonUtils {
         if (properties.getHeaders() != null) {
             enrichedHeaders.putAll(properties.getHeaders());
         }
-        if(properties.getHeaders().containsKey(MESSAGE_PUBLISHED_TEXT)) {
+        if(Objects.nonNull(properties.getHeaders()) && properties.getHeaders().containsKey(MESSAGE_PUBLISHED_TEXT)) {
             enrichedHeaders.put(MESSAGE_REPUBLISHED_TEXT, Instant.now().toEpochMilli());
         } else {
             enrichedHeaders.put(MESSAGE_PUBLISHED_TEXT, Instant.now().toEpochMilli());
