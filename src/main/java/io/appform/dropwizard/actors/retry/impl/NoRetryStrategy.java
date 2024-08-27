@@ -19,6 +19,7 @@ package io.appform.dropwizard.actors.retry.impl;
 import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
 import io.appform.dropwizard.actors.retry.RetryStrategy;
+import io.appform.dropwizard.actors.retry.RetryType;
 import io.appform.dropwizard.actors.retry.config.NoRetryConfig;
 
 /**
@@ -29,6 +30,6 @@ public class NoRetryStrategy extends RetryStrategy {
     public NoRetryStrategy(NoRetryConfig config) {
         super(RetryerBuilder.<Boolean>newBuilder()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(1))
-                .build());
+                .build(), RetryType.NO_RETRY);
     }
 }

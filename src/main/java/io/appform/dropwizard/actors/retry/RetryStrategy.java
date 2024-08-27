@@ -20,16 +20,32 @@ import com.github.rholder.retry.Retryer;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import io.appform.dropwizard.actors.retry.config.RetryConfig;
 import java.util.concurrent.Callable;
 
 /**
  * Baqse for all retry strategies
  */
-public abstract class RetryStrategy {
-    private final Retryer<Boolean> retryer;
 
-    protected RetryStrategy(Retryer<Boolean> retryer) {
+public abstract class RetryStrategy {
+    private Retryer<Boolean> retryer;
+    private final RetryType retryType;
+
+    protected RetryStrategy(Retryer<Boolean> retryer, RetryType retryType) {
         this.retryer = retryer;
+        this.retryType = retryType;
+
+    }
+    protected RetryStrategy(RetryType retryType) {
+        this.retryType = retryType;
+    }
+
+    public boolean execute(Callable<Boolean> callable,
+            AMQP.BasicProperties basicProperties, byte[] body, Channel retryChannel) throws Exception {
+        return switch (retryType) {
+            case COUNT_LIMITED_FIXED_WAIT_V2 -> this.execute(basicProperties, body, retryChannel);
+            default -> this.execute(callable);
+        };
     }
 
     public boolean execute(Callable<Boolean> callable) throws Exception {

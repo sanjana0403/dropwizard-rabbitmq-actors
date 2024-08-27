@@ -17,6 +17,8 @@
 package io.appform.dropwizard.actors.retry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.Channel;
 import io.appform.dropwizard.actors.retry.config.CountLimitedExponentialWaitRetryConfig;
 import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfig;
@@ -34,6 +36,8 @@ import io.appform.dropwizard.actors.retry.impl.NoRetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.TimeLimitedExponentialWaitRetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.TimeLimitedFixedWaitRetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.TimeLimitedIncrementalWaitRetryStrategy;
+import java.util.Calendar;
+import java.util.concurrent.Callable;
 
 /**
  * Creates strategy based on config
@@ -56,8 +60,9 @@ public class RetryStrategyFactory {
             case COUNT_LIMITED_FIXED_WAIT:
                 return new CountLimitedFixedWaitRetryStrategy(CountLimitedFixedWaitRetryConfig.class.cast(config));
             case COUNT_LIMITED_FIXED_WAIT_V2:
-                return new CountLimitedFixedWaitV2RetryStrategy<>((CountLimitedFixedWaitRetryConfig) config, queue, exchange, objectMapper);
+                return new CountLimitedFixedWaitV2RetryStrategy((CountLimitedFixedWaitRetryConfig) config, queue, exchange, objectMapper);
         }
         return null;
     }
+
 }

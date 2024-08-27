@@ -18,6 +18,7 @@ package io.appform.dropwizard.actors.utils;
 
 import static io.appform.dropwizard.actors.common.Constants.MESSAGE_DELIVERY_ATTEMPT;
 import static io.appform.dropwizard.actors.common.Constants.MESSAGE_PUBLISHED_TEXT;
+import static io.appform.dropwizard.actors.common.Constants.MESSAGE_REPUBLISHED_TEXT;
 
 import com.google.common.base.Strings;
 import com.rabbitmq.client.AMQP;
@@ -61,7 +62,11 @@ public class CommonUtils {
         if (properties.getHeaders() != null) {
             enrichedHeaders.putAll(properties.getHeaders());
         }
-        enrichedHeaders.put(MESSAGE_PUBLISHED_TEXT, Instant.now().toEpochMilli());
+        if(properties.getHeaders().containsKey(MESSAGE_PUBLISHED_TEXT)) {
+            enrichedHeaders.put(MESSAGE_REPUBLISHED_TEXT, Instant.now().toEpochMilli());
+        } else {
+            enrichedHeaders.put(MESSAGE_PUBLISHED_TEXT, Instant.now().toEpochMilli());
+        }
         enrichedHeaders.put(MESSAGE_DELIVERY_ATTEMPT, deliveryAttempt);
         return properties.builder()
                 .headers(Collections.unmodifiableMap(enrichedHeaders))

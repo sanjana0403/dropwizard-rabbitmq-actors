@@ -3,26 +3,23 @@ package io.appform.dropwizard.actors.retry.impl;
 import static io.appform.dropwizard.actors.common.Constants.MESSAGE_DELIVERY_ATTEMPT;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.rholder.retry.RetryerBuilder;
-import com.github.rholder.retry.StopStrategies;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import io.appform.dropwizard.actors.base.utils.NamingUtils;
 import io.appform.dropwizard.actors.retry.RetryStrategy;
+import io.appform.dropwizard.actors.retry.RetryType;
 import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfig;
 import io.appform.dropwizard.actors.utils.CommonUtils;
 import io.dropwizard.util.Duration;
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import javax.ws.rs.NameBinding;
 
 /**
  *
  * Limits retries
  *
  */
-public class CountLimitedFixedWaitV2RetryStrategy<Message> extends RetryStrategy {
+public class CountLimitedFixedWaitV2RetryStrategy extends RetryStrategy {
 
     String retryQueue;
     String retryExchange;
@@ -34,9 +31,7 @@ public class CountLimitedFixedWaitV2RetryStrategy<Message> extends RetryStrategy
     @SuppressWarnings("unused")
     public CountLimitedFixedWaitV2RetryStrategy(CountLimitedFixedWaitRetryConfig config, String queue,
             String exchange, ObjectMapper mapper) {
-        super(RetryerBuilder.<Boolean>newBuilder()
-                .withStopStrategy(StopStrategies.stopAfterAttempt(1))
-                .build());
+        super(RetryType.COUNT_LIMITED_FIXED_WAIT_V2);
         this.retryQueue = NamingUtils.getRetry(queue);
         this.retryExchange = NamingUtils.getRetry(exchange);
         this.sidelineQueue = NamingUtils.getSideline(queue);

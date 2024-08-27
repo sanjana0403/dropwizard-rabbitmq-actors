@@ -21,6 +21,7 @@ public class Constants {
 
     public static final String MESSAGE_EXPIRY_TEXT = "x-expire-at";
     public static final String MESSAGE_PUBLISHED_TEXT = "x-published-at";
+    public static final String MESSAGE_REPUBLISHED_TEXT = "x-republished-at";
     public static final String MESSAGE_DELIVERY_ATTEMPT = "x-delivery-attempt";
 
 }

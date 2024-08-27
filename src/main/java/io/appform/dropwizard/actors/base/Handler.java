@@ -98,7 +98,7 @@ public class Handler<Message> extends DefaultConsumer {
         try {
             val handleCallable = getHandleCallable(envelope, properties, body);
 
-            if (retryStrategy.execute(handleCallable)) {
+            if (retryStrategy.execute(handleCallable, properties, body, getChannel())) {
                 getChannel().basicAck(envelope.getDeliveryTag(), false);
             } else {
                 getChannel().basicReject(envelope.getDeliveryTag(), false);

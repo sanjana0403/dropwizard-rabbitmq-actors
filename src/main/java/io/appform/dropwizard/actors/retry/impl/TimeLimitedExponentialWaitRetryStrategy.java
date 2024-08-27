@@ -21,6 +21,7 @@ import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
 import io.appform.dropwizard.actors.retry.RetryStrategy;
+import io.appform.dropwizard.actors.retry.RetryType;
 import io.appform.dropwizard.actors.retry.config.TimeLimitedExponentialWaitRetryConfig;
 import io.appform.dropwizard.actors.utils.CommonUtils;
 
@@ -40,6 +41,6 @@ public class TimeLimitedExponentialWaitRetryStrategy extends RetryStrategy {
                 .withWaitStrategy(
                         WaitStrategies.exponentialWait(config.getMultipier(),
                                 config.getMaxTimeBetweenRetries().toMilliseconds(), TimeUnit.MILLISECONDS))
-                .build());
+                .build(), RetryType.TIME_LIMITED_EXPONENTIAL_BACKOFF);
     }
 }
