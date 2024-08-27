@@ -18,6 +18,8 @@ package io.appform.dropwizard.actors.retry;
 
 import com.github.rholder.retry.Retryer;
 
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 import java.util.concurrent.Callable;
 
 /**
@@ -31,6 +33,11 @@ public abstract class RetryStrategy {
     }
 
     public boolean execute(Callable<Boolean> callable) throws Exception {
+        return retryer.call(callable);
+    }
+
+    public boolean execute(Callable<Boolean> callable, AMQP.BasicProperties properties,
+            byte[] body, Channel channel) throws Exception {
         return retryer.call(callable);
     }
 }

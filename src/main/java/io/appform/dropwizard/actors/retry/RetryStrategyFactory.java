@@ -16,6 +16,8 @@
 
 package io.appform.dropwizard.actors.retry;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.Channel;
 import io.appform.dropwizard.actors.retry.config.CountLimitedExponentialWaitRetryConfig;
 import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfig;
 import io.appform.dropwizard.actors.retry.config.CountLimitedIncrementalWaitRetryConfig;
@@ -26,6 +28,7 @@ import io.appform.dropwizard.actors.retry.config.TimeLimitedFixedWaitRetryConfig
 import io.appform.dropwizard.actors.retry.config.TimeLimitedIncrementalWaitRetryConfig;
 import io.appform.dropwizard.actors.retry.impl.CountLimitedExponentialWaitRetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.CountLimitedFixedWaitRetryStrategy;
+import io.appform.dropwizard.actors.retry.impl.CountLimitedFixedWaitV2RetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.CountLimitedIncrementalWaitRetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.NoRetryStrategy;
 import io.appform.dropwizard.actors.retry.impl.TimeLimitedExponentialWaitRetryStrategy;
@@ -36,7 +39,7 @@ import io.appform.dropwizard.actors.retry.impl.TimeLimitedIncrementalWaitRetrySt
  * Creates strategy based on config
  */
 public class RetryStrategyFactory {
-    public RetryStrategy create(RetryConfig config) {
+    public RetryStrategy create(RetryConfig config, String queue, String exchange, ObjectMapper objectMapper) {
         switch (config.getType()) {
             case NO_RETRY:
                 return new NoRetryStrategy(NoRetryConfig.class.cast(config));
@@ -52,6 +55,8 @@ public class RetryStrategyFactory {
                 return new CountLimitedIncrementalWaitRetryStrategy(CountLimitedIncrementalWaitRetryConfig.class.cast(config));
             case COUNT_LIMITED_FIXED_WAIT:
                 return new CountLimitedFixedWaitRetryStrategy(CountLimitedFixedWaitRetryConfig.class.cast(config));
+            case COUNT_LIMITED_FIXED_WAIT_V2:
+                return new CountLimitedFixedWaitV2RetryStrategy<>((CountLimitedFixedWaitRetryConfig) config, queue, exchange, objectMapper);
         }
         return null;
     }

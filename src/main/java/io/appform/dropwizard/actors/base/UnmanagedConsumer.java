@@ -61,7 +61,7 @@ public class UnmanagedConsumer<Message> {
         this.expiredMessageHandlingFunction = expiredMessageHandlingFunction;
         this.errorCheckFunction = errorCheckFunction;
         this.queueName = NamingUtils.queueName(config.getPrefix(), name);
-        this.retryStrategy = retryStrategyFactory.create(config.getRetryConfig());
+        this.retryStrategy = retryStrategyFactory.create(config.getRetryConfig(), queueName, config.getExchange(), mapper);
         this.exceptionHandler = exceptionHandlingFactory.create(config.getExceptionHandlerConfig());
         this.observer = connection.getRootObserver();
     }
