@@ -16,7 +16,14 @@
 
 package io.appform.dropwizard.actors.utils;
 
+import static io.appform.dropwizard.actors.common.Constants.MESSAGE_DELIVERY_ATTEMPT;
+import static io.appform.dropwizard.actors.common.Constants.MESSAGE_PUBLISHED_TEXT;
+
 import com.google.common.base.Strings;
+import com.rabbitmq.client.AMQP;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -44,4 +51,21 @@ public class CommonUtils {
                 || (null != exception
                 && retriableExceptions.contains(exception.getClass().getSimpleName()));
     }
+
+    public static AMQP.BasicProperties getEnrichedProperties(AMQP.BasicProperties properties) {
+        return getEnrichedProperties(properties, 1);
+    }
+
+    public static AMQP.BasicProperties getEnrichedProperties(AMQP.BasicProperties properties, int deliveryAttempt) {
+        HashMap<String, Object> enrichedHeaders = new HashMap<>();
+        if (properties.getHeaders() != null) {
+            enrichedHeaders.putAll(properties.getHeaders());
+        }
+        enrichedHeaders.put(MESSAGE_PUBLISHED_TEXT, Instant.now().toEpochMilli());
+        enrichedHeaders.put(MESSAGE_DELIVERY_ATTEMPT, deliveryAttempt);
+        return properties.builder()
+                .headers(Collections.unmodifiableMap(enrichedHeaders))
+                .build();
+    }
+
 }

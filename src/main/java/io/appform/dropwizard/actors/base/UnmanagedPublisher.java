@@ -2,6 +2,7 @@ package io.appform.dropwizard.actors.base;
 
 import static io.appform.dropwizard.actors.common.Constants.MESSAGE_EXPIRY_TEXT;
 import static io.appform.dropwizard.actors.common.Constants.MESSAGE_PUBLISHED_TEXT;
+import static io.appform.dropwizard.actors.utils.CommonUtils.getEnrichedProperties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -114,17 +115,6 @@ public class UnmanagedPublisher<Message> {
             }
             return null;
         });
-    }
-
-    private AMQP.BasicProperties getEnrichedProperties(AMQP.BasicProperties properties) {
-        HashMap<String, Object> enrichedHeaders = new HashMap<>();
-        if (properties.getHeaders() != null) {
-            enrichedHeaders.putAll(properties.getHeaders());
-        }
-        enrichedHeaders.put(MESSAGE_PUBLISHED_TEXT, Instant.now().toEpochMilli());
-        return properties.builder()
-                .headers(Collections.unmodifiableMap(enrichedHeaders))
-                .build();
     }
 
     private int getShardId() {
