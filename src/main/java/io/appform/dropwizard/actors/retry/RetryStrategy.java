@@ -36,8 +36,7 @@ public abstract class RetryStrategy {
         return retryer.call(callable);
     }
 
-    public boolean execute(Callable<Boolean> callable, AMQP.BasicProperties properties,
-            byte[] body, Channel channel) throws Exception {
-        return retryer.call(callable);
+    public boolean execute(AMQP.BasicProperties properties, byte[] body, Channel retryChannel) throws Exception {
+        return true;
     }
 }

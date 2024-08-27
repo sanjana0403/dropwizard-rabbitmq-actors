@@ -46,17 +46,15 @@ public class CountLimitedFixedWaitV2RetryStrategy<Message> extends RetryStrategy
     }
 
     @Override
-    public boolean execute(Callable<Boolean> callable, AMQP.BasicProperties properties,
-            byte[] body, Channel channel) throws IOException {
-
+    public boolean execute(AMQP.BasicProperties properties, byte[] body, Channel retryChannel) throws IOException {
         int deliveryAttempt = properties.getHeaders().containsKey(MESSAGE_DELIVERY_ATTEMPT)
                 ? (int) properties.getHeaders().get(MESSAGE_DELIVERY_ATTEMPT)
                 : 0;
         if(deliveryAttempt!=0 && deliveryAttempt < config.getMaxAttempts()) {
-            channel.basicPublish(retryExchange, retryQueue, getProperties(config.getWaitTime(), properties), body);
+            retryChannel.basicPublish(retryExchange, retryQueue, getProperties(config.getWaitTime(), properties), body);
             return true;
         }
-        channel.basicPublish(sidelineExchange, sidelineQueue, getProperties(properties), body);
+        retryChannel.basicPublish(sidelineExchange, sidelineQueue, getProperties(properties), body);
         return true;
     }
 
