@@ -35,4 +35,12 @@ public class NamingUtils {
     public String getSideline(String queueName) {
         return String.format("%s_%s", queueName, "SIDELINE");
     }
+
+    public String getRetry(String queueName) {
+        return String.format("%s_%s", queueName, "RETRY");
+    }
+
+    public String getRetryDlx(String queueName) {
+        return String.format("%s_%s", queueName, "RETRY_DLX");
+    }
 }

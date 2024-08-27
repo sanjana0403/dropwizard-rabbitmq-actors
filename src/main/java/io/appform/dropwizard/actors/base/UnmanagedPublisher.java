@@ -175,15 +175,20 @@ public class UnmanagedPublisher<Message> {
     public void start() throws Exception {
         final String exchange = config.getExchange();
         final String dlx = NamingUtils.getSideline(config.getExchange());
+        final String retryExchange = NamingUtils.getRetry(config.getExchange());
+        final String retryDlx = NamingUtils.getRetryDlx(config.getExchange());
         if (config.isDelayed()) {
             ensureDelayedExchange(exchange);
         } else {
             ensureExchange(exchange);
         }
         ensureExchange(dlx);
+        ensureExchange(retryExchange);
+        ensureExchange(retryDlx);
 
         this.publishChannel = connection.newChannel();
         String sidelineQueueName = NamingUtils.getSideline(queueName);
+        String retryQueue = NamingUtils.getRetry(queueName);
         connection.ensure(sidelineQueueName, queueName, dlx, connection.rmqOpts(config));
         if (config.isSharded()) {
             int bound = config.getShardCount();
@@ -202,6 +207,8 @@ public class UnmanagedPublisher<Message> {
                     ttlExchange(config),
                     connection.rmqOpts(exchange, config));
         }
+        connection.addBinding(sidelineQueueName, retryDlx, retryQueue);
+        connection.ensure(retryQueue, retryExchange, connection.rmqOpts(retryDlx, config));
     }
 
     private void ensureExchange(String exchange) throws IOException {
