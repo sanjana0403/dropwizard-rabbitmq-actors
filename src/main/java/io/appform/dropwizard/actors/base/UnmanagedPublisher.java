@@ -207,7 +207,7 @@ public class UnmanagedPublisher<Message> {
                     ttlExchange(config),
                     connection.rmqOpts(exchange, config));
         }
-        connection.addBinding(sidelineQueueName, retryDlx, retryQueue);
+        connection.addBinding(queueName, retryDlx, retryQueue);
         connection.ensure(retryQueue, retryExchange, connection.rmqOpts(retryDlx, config));
     }
 
