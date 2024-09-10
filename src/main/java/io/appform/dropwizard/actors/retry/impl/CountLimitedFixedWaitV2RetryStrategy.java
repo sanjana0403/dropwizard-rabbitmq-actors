@@ -14,6 +14,7 @@ import io.appform.dropwizard.actors.retry.config.CountLimitedFixedWaitRetryConfi
 import io.appform.dropwizard.actors.utils.CommonUtils;
 import io.dropwizard.util.Duration;
 import java.io.IOException;
+import javax.ws.rs.NameBinding;
 
 /**
  *
@@ -25,6 +26,8 @@ public class CountLimitedFixedWaitV2RetryStrategy extends RetryStrategy {
     String retryQueue;
     String retryExchange;
     String sidelineQueue;
+
+    String queue;
     String sidelineExchange;
     ObjectMapper mapper;
     CountLimitedFixedWaitRetryConfigV2 config;
@@ -37,6 +40,7 @@ public class CountLimitedFixedWaitV2RetryStrategy extends RetryStrategy {
         this.retryExchange = NamingUtils.getRetry(exchange);
         this.sidelineQueue = NamingUtils.getSideline(queue);
         this.sidelineExchange = NamingUtils.getSideline(exchange);
+        this.queue = queue;
         this.config = config;
         this.mapper = mapper;
     }
@@ -47,15 +51,15 @@ public class CountLimitedFixedWaitV2RetryStrategy extends RetryStrategy {
                 ? (int) properties.getHeaders().get(MESSAGE_DELIVERY_ATTEMPT)
                 : 0;
         if(deliveryAttempt!=0 && deliveryAttempt < config.getMaxAttempts()) {
-            retryChannel.basicPublish(retryExchange, retryQueue, getProperties(config.getWaitTime(), properties), body);
+            retryChannel.basicPublish(retryExchange, retryQueue, getProperties(config.getWaitTime(), properties, deliveryAttempt+1), body);
             return true;
         }
-        retryChannel.basicPublish(sidelineExchange, sidelineQueue, getProperties(properties), body);
+        retryChannel.basicPublish(sidelineExchange, queue, getProperties(properties), body);
         return true;
     }
 
-    private BasicProperties getProperties(Duration wait, AMQP.BasicProperties properties) {
-        BasicProperties enrichedProperties = CommonUtils.getEnrichedProperties(properties);
+    private BasicProperties getProperties(Duration wait, AMQP.BasicProperties properties, int deliveryAttempt) {
+        BasicProperties enrichedProperties = CommonUtils.getEnrichedProperties(properties, deliveryAttempt);
         return enrichedProperties.builder().expiration(String.valueOf(wait.toMilliseconds())).build();
     }
 
